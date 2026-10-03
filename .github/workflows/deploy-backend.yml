@@ -3,7 +3,7 @@ name: Deploy Spring Boot to GCP
 on:
   push:
     branches:
-      - main # Change this if your default branch is master
+      - main # Change this if your default branch is master adding to resume run
 
 jobs:
   build-and-push:

@@ -28,8 +28,11 @@ public class EmailNotificationService {
     @Value("${notification.mail.enabled:false}")
     private boolean mailEnabled;
 
-    @Value("${notification.mail.from:noreply@localhost}")
+    @Value("${notification.mail.from:}")
     private String fromAddress;
+
+    @Value("${spring.mail.username:}")
+    private String smtpUsername;
 
     public EmailNotificationService(NotificationTemplateService templateService,
                                     FreemarkerTemplateRenderer renderer,
@@ -37,6 +40,16 @@ public class EmailNotificationService {
         this.templateService = templateService;
         this.renderer = renderer;
         this.mailSender = mailSender;
+    }
+
+    private String resolveFrom() {
+        if (fromAddress != null && !fromAddress.isBlank()) {
+            return fromAddress.trim();
+        }
+        if (smtpUsername != null && !smtpUsername.isBlank()) {
+            return smtpUsername.trim();
+        }
+        return null;
     }
 
     public Map<String, Object> send(SendEmailRequest request) {
@@ -65,9 +78,23 @@ public class EmailNotificationService {
                 return result("LOGGED", subject, body, template.getId());
             }
 
+            String from = resolveFrom();
+            if (from == null) {
+                log.error(
+                        "Email send skipped purpose={} to={} — empty From. Set NOTIFICATION_MAIL_FROM or SPRING_MAIL_USERNAME",
+                        purpose, request.getTo());
+                return result("FAILED", subject, body, template.getId());
+            }
+            if (smtpUsername == null || smtpUsername.isBlank()) {
+                log.error(
+                        "Email send skipped purpose={} to={} — SMTP username empty. Set SPRING_MAIL_USERNAME or MAIL_USERNAME",
+                        purpose, request.getTo());
+                return result("FAILED", subject, body, template.getId());
+            }
+
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromAddress);
+            helper.setFrom(from);
             helper.setTo(request.getTo().toArray(new String[0]));
             if (request.getCc() != null && !request.getCc().isEmpty()) {
                 helper.setCc(request.getCc().toArray(new String[0]));

@@ -38,6 +38,20 @@ $env:MAIL_PASSWORD="app-password"
 mvn spring-boot:run
 ```
 
+**Cloud Run (`SPRING_PROFILES_ACTIVE=prod`)** — set these on the **notification** service (not party/order):
+
+| Env var | Notes |
+|---------|--------|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `NOTIFICATION_MAIL_ENABLED` | `true` (prod default) |
+| `NOTIFICATION_MAIL_FROM` | Same as Gmail address, e.g. `you@gmail.com` |
+| `SPRING_MAIL_HOST` | `smtp.gmail.com` |
+| `SPRING_MAIL_PORT` | `587` |
+| `SPRING_MAIL_USERNAME` | Gmail address |
+| `SPRING_MAIL_PASSWORD` | Gmail **App Password** (not the normal login password) |
+
+`MAIL_USERNAME` / `MAIL_PASSWORD` also work. Send failures are logged and returned as `status: FAILED` — they never fail the order/register API.
+
 ## APIs
 
 ### Admin — templates
