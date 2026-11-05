@@ -40,5 +40,5 @@ jobs:
       # 6. Build the container image and upload it straight to Google Cloud
       - name: Build and Push Docker Image
         run: |
-          docker build -t asia-south1-docker.pkg.dev/project-3e935033-4ac7-4904-bad/ecommerce-apps/notification-service:latest .
-          docker push asia-south1-docker.pkg.dev/project-3e935033-4ac7-4904-bad/ecommerce-apps/notification-service:latest
+          docker build -t asia-south1-docker.pkg.dev/project-e351ea0a-f825-4e53-b5f/ecommerce-apps/notification-service:latest .
+          docker push asia-south1-docker.pkg.dev/project-e351ea0a-f825-4e53-b5f/ecommerce-apps/notification-service:latest
